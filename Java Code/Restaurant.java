@@ -33,6 +33,8 @@ public class Restaurant {
                 displayMenuItems(connection, scanner);
             } else if (procedureName.equalsIgnoreCase("processOrder")) {
                 processOrder(connection, scanner);
+            } else if (procedureName.equalsIgnoreCase("promoteEmployee")) {
+                promoteEmployee(connection, scanner);
             } else {
                 System.out.println("Unknown stored procedure.");
             }
@@ -93,6 +95,25 @@ public class Restaurant {
 
             stmt.execute();
             System.out.println("Employee added successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error executing stored procedure: " + e.getMessage());
+        }
+    }
+
+    private static void promoteEmployee(Connection connection, Scanner scanner) {
+        System.out.print("Enter employee ID: ");
+        int empID = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter new job type: ");
+        String newJobType = scanner.nextLine();
+
+        String sql = "{CALL sp_PromoteEmployee(?, ?)}";
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setInt(1, empID);
+            stmt.setString(2, newJobType);
+
+            stmt.execute();
+            System.out.println("Employee promoted successfully.");
         } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
@@ -189,7 +210,7 @@ public class Restaurant {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
-    
+
     private static void displayMenuItems(Connection connection, Scanner scanner) {
         System.out.print("Enter customer ID: ");
         int customerID = scanner.nextInt();
@@ -225,22 +246,21 @@ public class Restaurant {
         }
     }
 
-
     private static void processOrder(Connection connection, Scanner scanner) {
         System.out.print("Enter customer ID: ");
         int customerID = scanner.nextInt();
         System.out.print("Enter item ID: ");
         int itemID = scanner.nextInt();
         scanner.nextLine();
-    
+
         String sql = "{CALL ProcessOrder(?, ?)}";
-    
+
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setInt(1, customerID);
             stmt.setInt(2, itemID);
-    
+
             stmt.execute();
-    
+
             System.out.println("Order processed successfully!");
         } catch (SQLException e) {
             String errorMessage = e.getMessage();
@@ -251,5 +271,5 @@ public class Restaurant {
             }
         }
     }
-    
+
 }
