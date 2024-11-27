@@ -34,8 +34,7 @@ public class Restaurant {
             else if (procedureName.equalsIgnoreCase("addTip")) {
                 addTip(connection, scanner);
             } 
-            else if (procedureName.equalsIgnoreCase("calculatePaycheck"))
-            {
+            else if (procedureName.equalsIgnoreCase("calculatePaycheck")) {
                 calculatePaycheck(connection, scanner);
             }
             else {
@@ -43,11 +42,12 @@ public class Restaurant {
             }
             
         } 
-        catch (SQLException e) 
-        {
+        catch (SQLException e) {
             e.printStackTrace();
         }
-
+        finally {
+            scanner.close();
+        }
     }
 
     private static void addCustomer(Connection connection, Scanner scanner) {
@@ -60,6 +60,7 @@ public class Restaurant {
         Date birthdate = Date.valueOf(birthdateStr); 
         System.out.print("Enter reservation ID: ");
         int resID = scanner.nextInt();
+        scanner.nextLine();
 
         String sql = "{CALL sp_AddCustomer(?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
@@ -87,6 +88,7 @@ public class Restaurant {
         int hoursWorked = scanner.nextInt();
         System.out.print("Enter paycheck: ");
         int paycheck = scanner.nextInt();
+        scanner.nextLine();
 
         String sql = "{CALL sp_AddEmployee(?, ?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
@@ -111,7 +113,7 @@ public class Restaurant {
         String reserverLname = scanner.nextLine();
         System.out.print("Enter number of people: ");
         int numPeople = scanner.nextInt();
-        scanner.nextLine();  // Clear the buffer
+        scanner.nextLine();  
         System.out.print("Enter reservation date (YYYY-MM-DD): ");
         String resDate = scanner.nextLine();
         System.out.print("Enter reservation time (HH:mm:ss): ");
@@ -120,14 +122,15 @@ public class Restaurant {
         int mealPrice = scanner.nextInt();
         System.out.print("Enter tip (in cents): ");
         int tip = scanner.nextInt();
+        scanner.nextLine();
 
         String sql = "{CALL sp_AddReservation(?, ?, ?, ?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setString(1, reserverFname);
             stmt.setString(2, reserverLname);
             stmt.setInt(3, numPeople);
-            stmt.setDate(4, Date.valueOf(resDate)); // convert String to Date
-            stmt.setTime(5, Time.valueOf(resTime)); // convert String to Time
+            stmt.setDate(4, Date.valueOf(resDate)); 
+            stmt.setTime(5, Time.valueOf(resTime)); 
             stmt.setInt(6, mealPrice);
             stmt.setInt(7, tip);
 
@@ -144,6 +147,7 @@ public class Restaurant {
         int empID = scanner.nextInt();
         System.out.print("Enter hours to add: ");
         int hoursToAdd = scanner.nextInt();
+        scanner.nextLine();
 
         String sql = "{CALL sp_AddTime(?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
@@ -163,6 +167,7 @@ public class Restaurant {
         int resID = scanner.nextInt();
         System.out.print("Enter tip (in cents): ");
         int tip = scanner.nextInt();
+        scanner.nextLine();
 
         String sql = "{CALL sp_AddTip(?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
@@ -180,16 +185,18 @@ public class Restaurant {
     private static void calculatePaycheck(Connection connection, Scanner scanner) {
         System.out.print("Enter employee ID: ");
         int empID = scanner.nextInt();
+        scanner.nextLine();
     
         String sql = "{CALL sp_CalculatePaycheck(?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
-            stmt.setInt(1, empID); // Set the empID parameter
-    
-            // Execute the stored procedure
-            stmt.execute();
-            System.out.println("Paycheck calculated successfully.");
-        } 
-        catch (SQLException e) {
+            stmt.setInt(1, empID);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int paycheck = rs.getInt("paycheck");
+                System.out.println("Paycheck: " + paycheck);
+            }
+        } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
