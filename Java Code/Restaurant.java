@@ -6,7 +6,7 @@ public class Restaurant {
         String connectionUrl = "jdbc:sqlserver://cxp-sql-02\\jxs1902;" +
                 "database=Restaurant;" +
                 "user=RestaurantDev;" +
-                "password=CSDS341Pr0j3ctgr*up24;" +
+                "password=CSDS341Pr0j3ctGr0up24;" +
                 "encrypt=true;" +
                 "trustServerCertificate=true;" +
                 "loginTimeout=900;";
@@ -189,7 +189,7 @@ public class Restaurant {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
-    
+
     private static void displayMenuItems(Connection connection, Scanner scanner) {
         System.out.print("Enter customer ID: ");
         int customerID = scanner.nextInt();
@@ -225,22 +225,21 @@ public class Restaurant {
         }
     }
 
-
     private static void processOrder(Connection connection, Scanner scanner) {
         System.out.print("Enter customer ID: ");
         int customerID = scanner.nextInt();
         System.out.print("Enter item ID: ");
         int itemID = scanner.nextInt();
         scanner.nextLine();
-    
+
         String sql = "{CALL ProcessOrder(?, ?)}";
-    
+
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setInt(1, customerID);
             stmt.setInt(2, itemID);
-    
+
             stmt.execute();
-    
+
             System.out.println("Order processed successfully!");
         } catch (SQLException e) {
             String errorMessage = e.getMessage();
@@ -251,5 +250,5 @@ public class Restaurant {
             }
         }
     }
-    
+
 }
