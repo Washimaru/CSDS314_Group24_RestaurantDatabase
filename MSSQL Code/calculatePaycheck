@@ -10,7 +10,7 @@ BEGIN
     BEGIN TRY
         SELECT @hoursWorked = hoursWorked, @hourlySalary = s.hourlySalary
         FROM employee e
-        JOIN salaries s ON e.type = s.type
+        JOIN salaries s ON e.jobType = s.jobType
         WHERE e.empID = @empID;
 
         SET @paycheck = @hoursWorked * @hourlySalary;
@@ -18,7 +18,7 @@ BEGIN
         IF EXISTS (
             SELECT 1
             FROM employee
-            WHERE empID = @empID AND type = 'server'
+            WHERE empID = @empID AND jobType = 'waiter'
         )
         BEGIN
             SELECT @totalTips = COALESCE(SUM(r.tip), 0)

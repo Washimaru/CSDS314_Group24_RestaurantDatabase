@@ -17,12 +17,12 @@ BEGIN
     BEGIN TRY
         SELECT TOP 1 @empID = empID
         FROM employee
-        WHERE jobType = 'server'
+        WHERE jobType = 'waiter'
         ORDER BY NEWID();
 
         IF @empID IS NULL
         BEGIN
-            THROW 51002, 'No available server to assign to the reservation.', 1;
+            THROW 51002, 'No available waiter to assign to the reservation.', 1;
         END
 
         IF EXISTS (
