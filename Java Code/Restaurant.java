@@ -1,33 +1,26 @@
 import java.sql.*;
+import java.util.Scanner;
 
 public class Restaurant {
     public static void main(String[] args) {
         String connectionUrl =
             "jdbc:sqlserver://cxp-sql-02\\jxs1902;" +
-            "database=university;" +
+            "database=restaurant;" +
             "user=dbuser;" +
             "password=csds341143sdsc;" +
             "encrypt=true;" +
             "trustServerCertificate=true;" +
             "loginTimeout=900;";
 
+        Scanner scanner = new Scanner(System.in);
         try (Connection connection = DriverManager.getConnection(connectionUrl)) {
             System.out.println("Connected to the database.");
+            System.out.print("Enter the stored procedure name: ");
+            String procedureName = scanner.nextLine();
 
-            String sql = "{CALL insertStudent2(?, ?, ?)}";
-            try (CallableStatement stmt = connection.prepareCall(sql)) {
-
-                stmt.setString(1, "Kyle Kaufman");
-                stmt.setString(2, "Comp. Sci.");
-                stmt.setInt(3, 100);
-
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    int newId = rs.getInt("new_id");
-                    System.out.println("Inserted student ID: " + newId);
-                }
-            }
-        } catch (SQLException e) {
+            
+        } 
+        catch (SQLException e) {
             e.printStackTrace();
         }
     }
