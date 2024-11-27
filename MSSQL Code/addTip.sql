@@ -7,6 +7,11 @@ BEGIN
     DECLARE @totalAmount INT;
 
     BEGIN TRY
+        IF @tip < 0
+        BEGIN
+            THROW 51005, 'Tip cannot be negative.', 1;
+        END
+
         SELECT @mealPrice = mealPrice
         FROM reservation
         WHERE resID = @resID;
