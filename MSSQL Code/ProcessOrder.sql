@@ -1,7 +1,6 @@
 CREATE OR ALTER PROCEDURE ProcessOrder
     @customerID INT,
-    @itemID INT,
-    @timeOrdered DATETIME
+    @itemID INT
 AS
 BEGIN
     DECLARE @birthdate DATE, @age INT, @isAlcoholic BIT;
