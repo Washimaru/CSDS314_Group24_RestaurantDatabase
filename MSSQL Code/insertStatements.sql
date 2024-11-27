@@ -35,7 +35,7 @@ INSERT INTO customer (customerID, resID, fname, lname, birthdate) VALUES
 (4, 4, 'Diana', 'Taylor', '1980-12-30'),
 (5, 5, 'Ella', 'Anderson', '1995-01-01'),
 (6, 6, 'Frank', 'Thomas', '1987-05-10'),
-(7, 7, 'Grace', 'Jackson', '2000-07-20'),
+(7, 7, 'Grace', 'Jackson', '2006-07-20'),
 (8, 1, 'Hannah', 'Martinez', '1993-11-11'),
 (9, 3, 'Ian', 'White', '1991-06-25'),
 (10, 2, 'Jack', 'King', '1994-09-13');
