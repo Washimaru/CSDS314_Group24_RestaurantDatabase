@@ -20,28 +20,24 @@ public class Restaurant {
             String procedureName = scanner.nextLine();
             if (procedureName.equals("addCustomer")) 
             {
-                // Prompt user for parameters
                 System.out.print("Enter first name: ");
                 String fname = scanner.nextLine();
                 System.out.print("Enter last name: ");
                 String lname = scanner.nextLine();
                 System.out.print("Enter birthdate (YYYY-MM-DD): ");
                 String birthdateStr = scanner.nextLine();
-                Date birthdate = Date.valueOf(birthdateStr);  // Convert string to Date
+                Date birthdate = Date.valueOf(birthdateStr); 
                 System.out.print("Enter reservation ID: ");
                 int resID = scanner.nextInt();
 
-                // Call the stored procedure
                 String sql = "{CALL sp_AddCustomer(?, ?, ?, ?)}";
                 try (CallableStatement stmt = connection.prepareCall(sql)) 
                 {
-                    // Set parameters for the stored procedure
                     stmt.setString(1, fname);
                     stmt.setString(2, lname);
                     stmt.setDate(3, birthdate);
                     stmt.setInt(4, resID);
 
-                    // Execute the stored procedure
                     stmt.execute();
                     System.out.println("Customer added successfully.");
                 } 
