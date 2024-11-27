@@ -4,6 +4,8 @@ CREATE PROCEDURE sp_AddTime
 AS
 BEGIN
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         IF @hoursToAdd <= 0
         BEGIN
             THROW 51003, 'Hours to add must be greater than zero.', 1;
@@ -30,8 +32,11 @@ BEGIN
         WHERE empID = @empID;
 
         PRINT 'Updated hours worked: ' + CAST(@newHoursWorked AS NVARCHAR(10)) + '.';
+
+        COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
-        PRINT ERROR_MESSAGE();
+        ROLLBACK TRANSACTION;
+        PRINT 'Error: ' + ERROR_MESSAGE();
     END CATCH
 END;

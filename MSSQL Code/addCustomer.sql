@@ -11,6 +11,8 @@ BEGIN
     DECLARE @remainingCapacity INT;
 
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         SELECT @numPeopleInReservation = numPeople 
         FROM reservation
         WHERE resID = @resID;
@@ -24,6 +26,7 @@ BEGIN
         IF @remainingCapacity <= 0
         BEGIN
             PRINT 'Reservation has reached its maximum capacity. Cannot add more customers.';
+            ROLLBACK TRANSACTION;
             RETURN; 
         END
 
@@ -38,8 +41,12 @@ BEGIN
         PRINT 'Birthdate: ' + CONVERT(VARCHAR(10), @birthdate);
         PRINT 'Reservation ID: ' + CAST(@resID AS NVARCHAR(10));
 
+        COMMIT TRANSACTION;
+
     END TRY
     BEGIN CATCH
-        PRINT ERROR_MESSAGE();
+        ROLLBACK TRANSACTION;
+
+        PRINT 'Error occurred: ' + ERROR_MESSAGE();
     END CATCH;
 END;
