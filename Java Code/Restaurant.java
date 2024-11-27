@@ -36,6 +36,10 @@ public class Restaurant {
             else if (procedureName.equalsIgnoreCase("addTip")) {
                 addTip(connection, scanner);
             } 
+            else if (procedureName.equalsIgnoreCase("calculatePaycheck"))
+            {
+                calculatePaycheck(connection, scanner);
+            }
             else {
                 System.out.println("Unknown stored procedure.");
             }
@@ -169,6 +173,23 @@ public class Restaurant {
 
             stmt.execute();
             System.out.println("Tip added successfully.");
+        } 
+        catch (SQLException e) {
+            System.out.println("Error executing stored procedure: " + e.getMessage());
+        }
+    }
+
+    private static void calculatePaycheck(Connection connection, Scanner scanner) {
+        System.out.print("Enter employee ID: ");
+        int empID = scanner.nextInt();
+    
+        String sql = "{CALL sp_CalculatePaycheck(?)}";
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setInt(1, empID); // Set the empID parameter
+    
+            // Execute the stored procedure
+            stmt.execute();
+            System.out.println("Paycheck calculated successfully.");
         } 
         catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
