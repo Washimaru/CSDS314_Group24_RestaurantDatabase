@@ -8,6 +8,8 @@ BEGIN
     DECLARE @totalTips INT = 0;
 
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         SELECT @hoursWorked = hoursWorked, @hourlySalary = s.hourlySalary
         FROM employee e
         JOIN salaries s ON e.jobType = s.jobType
@@ -32,6 +34,8 @@ BEGIN
         SET paycheck = @paycheck
         WHERE empID = @empID;
 
+        COMMIT TRANSACTION;
+
         PRINT 'Paycheck calculated successfully.';
         PRINT 'Paycheck Details:';
         PRINT 'Base Pay: ' + CAST(@hoursWorked * @hourlySalary AS NVARCHAR);
@@ -39,6 +43,9 @@ BEGIN
         PRINT 'Total Paycheck: ' + CAST(@paycheck AS NVARCHAR);
     END TRY
     BEGIN CATCH
+        ROLLBACK TRANSACTION;
+
+        PRINT 'An error occurred. Transaction has been rolled back.';
         PRINT ERROR_MESSAGE();
     END CATCH;
 END;

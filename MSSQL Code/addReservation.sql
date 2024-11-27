@@ -15,6 +15,8 @@ BEGIN
     DECLARE @resID INT;
 
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         SELECT TOP 1 @empID = empID
         FROM employee
         WHERE jobType = 'waiter'
@@ -44,7 +46,9 @@ BEGIN
         INSERT INTO reservation (fname, lname, numPeople, time, date, empID, mealPrice, tip)
         VALUES (@reserverFname, @reserverLname, @numPeople, @resTime, @resDate, @empID, @mealPrice, @tip);
 
-        SET @resID = SCOPE_IDENTITY();
+        SET @resID = SCOPE_IDENTITY(); 
+
+        COMMIT TRANSACTION;
 
         PRINT 'Reservation successfully added. Reservation ID: ' + CAST(@resID AS NVARCHAR(10));
         PRINT 'Reservation Details:';
@@ -62,6 +66,9 @@ BEGIN
 
     END TRY
     BEGIN CATCH
+        ROLLBACK TRANSACTION;
+
+        PRINT 'An error occurred. Transaction has been rolled back.';
         PRINT ERROR_MESSAGE();
     END CATCH;
 END;
