@@ -18,8 +18,6 @@ public class Restaurant {
             System.out.println("Connected to the database.");
             System.out.print("Enter the stored procedure name: ");
             String procedureName = scanner.nextLine();
-            System.out.print("Enter the stored procedure name: ");
-            String procedureName = scanner.nextLine();
 
             if (procedureName.equalsIgnoreCase("addCustomer")) {
                 addCustomer(connection, scanner);
