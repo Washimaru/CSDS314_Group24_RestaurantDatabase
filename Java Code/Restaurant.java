@@ -29,8 +29,10 @@ public class Restaurant {
                 addTip(connection, scanner);
             } else if (procedureName.equalsIgnoreCase("calculatePaycheck")) {
                 calculatePaycheck(connection, scanner);
-            } else if (procedureName.equalsIgnoreCase("displayMenuItems")) {//new
+            } else if (procedureName.equalsIgnoreCase("displayMenuItems")) {
                 displayMenuItems(connection, scanner);
+            } else if (procedureName.equalsIgnoreCase("processOrder")) {
+                processOrder(connection, scanner);
             } else {
                 System.out.println("Unknown stored procedure.");
             }
@@ -188,7 +190,6 @@ public class Restaurant {
         }
     }
     
-    //everything below is what John added
     private static void displayMenuItems(Connection connection, Scanner scanner) {
         System.out.print("Enter customer ID: ");
         int customerID = scanner.nextInt();
@@ -224,4 +225,31 @@ public class Restaurant {
         }
     }
 
+
+    private static void processOrder(Connection connection, Scanner scanner) {
+        System.out.print("Enter customer ID: ");
+        int customerID = scanner.nextInt();
+        System.out.print("Enter item ID: ");
+        int itemID = scanner.nextInt();
+        scanner.nextLine();
+    
+        String sql = "{CALL ProcessOrder(?, ?)}";
+    
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setInt(1, customerID);
+            stmt.setInt(2, itemID);
+    
+            stmt.execute();
+    
+            System.out.println("Order processed successfully!");
+        } catch (SQLException e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("Order denied")) {
+                System.out.println(errorMessage);
+            } else {
+                System.out.println("Error processing the order: " + e.getMessage());
+            }
+        }
+    }
+    
 }
