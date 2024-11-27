@@ -17,7 +17,7 @@ BEGIN
     BEGIN TRY
         SELECT TOP 1 @empID = empID
         FROM employee
-        WHERE type = 'server'
+        WHERE jobType = 'server'
         ORDER BY NEWID();
 
         IF @empID IS NULL
