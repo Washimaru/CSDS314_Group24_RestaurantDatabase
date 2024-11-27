@@ -86,14 +86,15 @@ INSERT INTO usedIn (ingredientID, dishID) VALUES
 (3, 6);  -- Wine uses Milk (for wine with dairy-based sauce)
 
 -- Insert into ordered table
-INSERT INTO ordered (orderID, customerID, itemID, timeOrdered) VALUES
-(1, 1, 1, '2024-11-26 18:30:00'),
-(2, 2, 2, '2024-11-26 20:00:00'),
-(3, 3, 3, '2024-11-26 19:00:00'),
-(4, 4, 4, '2024-11-26 21:00:00'),
-(5, 5, 5, '2024-11-26 18:00:00'),
-(6, 6, 3, '2024-11-26 19:30:00'),
-(7, 7, 6, '2024-11-26 20:30:00'),
-(8, 8, 7, '2024-11-26 18:30:00'),
-(9, 9, 2, '2024-11-26 19:00:00'),
-(10, 10, 5, '2024-11-26 20:00:00');
+INSERT INTO ordered (orderID, customerID, itemID) VALUES
+(1, 1, 1),
+(2, 2, 2),
+(3, 3, 3),
+(4, 4, 4),
+(5, 5, 5),
+(6, 6, 3),
+(7, 7, 6),
+(8, 8, 7),
+(9, 9, 2),
+(10, 10, 5);
+
