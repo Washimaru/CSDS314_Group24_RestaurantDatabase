@@ -1,4 +1,8 @@
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class Restaurant {
@@ -105,31 +109,78 @@ public class Restaurant {
         String reserverLname = scanner.nextLine();
         System.out.print("Enter number of people: ");
         int numPeople = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Enter reservation date (YYYY-MM-DD): ");
-        String resDate = scanner.nextLine();
-        System.out.print("Enter reservation time (HH:mm:ss): ");
-        String resTime = scanner.nextLine();
-        System.out.print("Enter meal price (in cents): ");
-        int mealPrice = scanner.nextInt();
-        System.out.print("Enter tip (in cents): ");
-        int tip = scanner.nextInt();
-        scanner.nextLine();
-
-        String sql = "{CALL sp_AddReservation(?, ?, ?, ?, ?, ?, ?)}";
+        scanner.nextLine(); // Consume the newline character
+    
+        String resDate;
+        String resTime;
+    
+        // Validate reservation date
+        while (true) {
+            System.out.print("Enter reservation date (YYYY-MM-DD): ");
+            resDate = scanner.nextLine();
+            if (isValidDate(resDate)) {
+                break;
+            } else {
+                System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+            }
+        }
+    
+        // Validate reservation time
+        while (true) {
+            System.out.print("Enter reservation time (HH:mm:ss): ");
+            resTime = scanner.nextLine();
+            if (isValidTime(resTime)) {
+                break;
+            } else {
+                System.out.println("Invalid time format. Please enter the time in HH:mm:ss format.");
+            }
+        }
+    
+        String sql = "{CALL sp_AddReservation(?, ?, ?, ?, ?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
+            // Set input parameters
             stmt.setString(1, reserverFname);
             stmt.setString(2, reserverLname);
             stmt.setInt(3, numPeople);
             stmt.setDate(4, Date.valueOf(resDate));
             stmt.setTime(5, Time.valueOf(resTime));
-            stmt.setInt(6, mealPrice);
-            stmt.setInt(7, tip);
-
+            stmt.setInt(6, 0); // Default mealPrice
+            stmt.setInt(7, 0); // Default tip
+    
+            // Register output parameter
+            stmt.registerOutParameter(8, Types.NVARCHAR);
+    
+            // Execute the stored procedure
             stmt.execute();
-            System.out.println("Reservation added successfully.");
+    
+            // Retrieve and print the reservation details
+            String reservationDetails = stmt.getString(8);
+            System.out.println("Reservation added successfully:");
+            System.out.println(reservationDetails);
         } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
+        }
+    }
+    
+    // Method to validate date format
+    private static boolean isValidDate(String date) {
+        try {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate.parse(date, dateFormatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+    
+    // Method to validate time format
+    private static boolean isValidTime(String time) {
+        try {
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            LocalTime.parse(time, timeFormatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
         }
     }
 
@@ -174,22 +225,35 @@ public class Restaurant {
     private static void calculatePaycheck(Connection connection, Scanner scanner) {
         System.out.print("Enter employee ID: ");
         int empID = scanner.nextInt();
-        scanner.nextLine();
-
-        String sql = "{CALL sp_CalculatePaycheck(?)}";
+        scanner.nextLine(); // Consume newline
+    
+        String sql = "{CALL sp_CalculatePaycheck(?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
+            // Set IN parameter
             stmt.setInt(1, empID);
-
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                int paycheck = rs.getInt("paycheck");
-                System.out.println("Paycheck: " + paycheck);
-            }
+    
+            // Register OUT parameters
+            stmt.registerOutParameter(2, java.sql.Types.INTEGER); // Base Pay
+            stmt.registerOutParameter(3, java.sql.Types.INTEGER); // Tips
+            stmt.registerOutParameter(4, java.sql.Types.INTEGER); // Total Pay
+    
+            // Execute stored procedure
+            stmt.execute();
+    
+            double basePay = (double)stmt.getInt(2);
+            double tips = (double)stmt.getInt(3);
+            double totalPay = (double)stmt.getInt(4);
+    
+            System.out.println("Paycheck calculated successfully:");
+            System.out.println("Base Pay: " + basePay/100 + " dollars/hour");
+            System.out.println("Tips: " + tips/100 + " dollars");
+            System.out.println("Total Paycheck: " + totalPay/100 + " dollars");
         } catch (SQLException e) {
-            System.out.println("Error executing stored procedure: " + e.getMessage());
+            System.out.println("Error calculating paycheck: " + e.getMessage());
         }
     }
-
+    
+    
     private static void displayMenuItems(Connection connection, Scanner scanner) {
         System.out.print("Enter customer ID: ");
         int customerID = scanner.nextInt();

@@ -3,6 +3,8 @@ CREATE OR ALTER PROCEDURE ProcessOrder
     @itemID INT
 AS
 BEGIN
+    BEGIN TRANSACTION;
+
     DECLARE @birthdate DATE, @age INT, @isAlcoholic BIT;
 
     SELECT @birthdate = birthdate
@@ -30,6 +32,7 @@ BEGIN
           )
     )
     BEGIN
+        ROLLBACK TRANSACTION;
         RAISERROR ('Order denied: Customer is allergic to this menu item.', 16, 1);
         RETURN;
     END;
@@ -41,18 +44,21 @@ BEGIN
         WHERE usedIn.dishID = @itemID AND ingredients.amount <= 0
     )
     BEGIN
+        ROLLBACK TRANSACTION;
         RAISERROR ('Order denied: Insufficient ingredients for this menu item.', 16, 1);
         RETURN;
     END;
 
     IF @isAlcoholic = 1 AND @age < 21
     BEGIN
+        ROLLBACK TRANSACTION;
         RAISERROR ('Order denied: Customer is under 21 and cannot order alcoholic items.', 16, 1);
         RETURN;
     END;
 
     INSERT INTO ordered (customerID, itemID)
     VALUES (@customerID, @itemID);
-    
+
+    COMMIT TRANSACTION;
     PRINT 'Order placed successfully!';
 END;
