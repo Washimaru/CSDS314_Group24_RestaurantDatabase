@@ -29,6 +29,8 @@ public class Restaurant {
                 addTip(connection, scanner);
             } else if (procedureName.equalsIgnoreCase("calculatePaycheck")) {
                 calculatePaycheck(connection, scanner);
+            } else if (procedureName.equalsIgnoreCase("displayMenuItems")) {//new
+                displayMenuItems(connection, scanner);
             } else {
                 System.out.println("Unknown stored procedure.");
             }
@@ -185,4 +187,41 @@ public class Restaurant {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
+    
+    //everything below is what John added
+    private static void displayMenuItems(Connection connection, Scanner scanner) {
+        System.out.print("Enter customer ID: ");
+        int customerID = scanner.nextInt();
+        scanner.nextLine();
+
+        String sql = "{CALL DisplayMenuItems(?)}";
+
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setInt(1, customerID);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("Customer not found or birthdate is missing.");
+            } else {
+                do {
+                    int itemID = rs.getInt("itemID");
+                    String name = rs.getString("menuItemName");
+                    double price = rs.getDouble("price");
+                    String dishType = rs.getString("dishType");
+                    boolean isAlcoholic = rs.getBoolean("isAlcoholic");
+
+                    System.out.println("Item ID: " + itemID);
+                    System.out.println("Name: " + name);
+                    System.out.println("Price: $" + price);
+                    System.out.println("Dish Type: " + dishType);
+                    System.out.println("Alcoholic: " + (isAlcoholic ? "Yes" : "No"));
+                    System.out.println("-------------------------------------");
+                } while (rs.next());
+            }
+        } catch (SQLException e) {
+            System.out.println("Error executing stored procedure: " + e.getMessage());
+        }
+    }
+
 }
