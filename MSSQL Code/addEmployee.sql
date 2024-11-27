@@ -2,7 +2,8 @@ CREATE PROCEDURE sp_AddEmployee
     @fname NVARCHAR(50),
     @lname NVARCHAR(50),
     @jobType NVARCHAR(20),
-    @hoursWorked INT = 0
+    @hoursWorked INT = 0,
+	@paycheck INT = 0
 AS
 BEGIN
     BEGIN TRY
@@ -20,11 +21,12 @@ BEGIN
         FROM salaries
         WHERE jobType = @jobType;
 
-        INSERT INTO employee (fname, lname, jobType, hoursWorked)
-        VALUES (@fname, @lname, @jobType, @hoursWorked);
+        -- Exclude empID from the insert statement, as it will be auto-generated
+        INSERT INTO employee (fname, lname, jobType, hoursWorked, paycheck)
+        VALUES (@fname, @lname, @jobType, @hoursWorked, @paycheck);
 
         DECLARE @newEmpID INT;
-        SET @newEmpID = SCOPE_IDENTITY();
+        SET @newEmpID = SCOPE_IDENTITY();  -- Get the newly generated empID
 
         PRINT 'Employee successfully added. Employee ID: ' + CAST(@newEmpID AS NVARCHAR(10));
         PRINT 'Employee Details:';
