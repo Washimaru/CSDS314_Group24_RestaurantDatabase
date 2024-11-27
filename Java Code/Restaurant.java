@@ -3,7 +3,7 @@ import java.sql.*;
 public class Restaurant {
     public static void main(String[] args) {
         String connectionUrl =
-            "jdbc:sqlserver://cxp-sql-02\\jfs145;" +
+            "jdbc:sqlserver://cxp-sql-02\\jxs1902;" +
             "database=university;" +
             "user=dbuser;" +
             "password=csds341143sdsc;" +
