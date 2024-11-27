@@ -2,15 +2,18 @@ CREATE OR ALTER PROCEDURE DisplayMenuItems
     @customerID INT
 AS
 BEGIN
+    BEGIN TRANSACTION;
+
     DECLARE @currentDate DATE = GETDATE();
     DECLARE @birthdate DATE;
-    
+   
     SELECT @birthdate = birthdate
     FROM customer
     WHERE customerID = @customerID;
 
     IF @birthdate IS NULL
     BEGIN
+        ROLLBACK TRANSACTION;
         PRINT 'Customer not found or birthdate is missing.';
         RETURN;
     END
@@ -40,4 +43,6 @@ BEGIN
         )
     )
     AND (@age >= 21 OR menuItem.isAlcoholic = 0);
+
+    COMMIT TRANSACTION;
 END;

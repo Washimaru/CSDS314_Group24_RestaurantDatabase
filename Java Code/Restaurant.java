@@ -6,7 +6,7 @@ public class Restaurant {
         String connectionUrl = "jdbc:sqlserver://cxp-sql-02\\jxs1902;" +
                 "database=Restaurant;" +
                 "user=RestaurantDev;" +
-                "password=CSDS341Pr0j3ctgr*up24;" +
+                "password=CSDS341Pr0j3ctGr0up24;" +
                 "encrypt=true;" +
                 "trustServerCertificate=true;" +
                 "loginTimeout=900;";
