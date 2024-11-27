@@ -1,3 +1,8 @@
+CREATE TABLE salaries (
+    jobType VARCHAR(50) PRIMARY KEY,
+    hourlySalary INT NOT NULL
+);
+
 CREATE TABLE employee (
     empID INT PRIMARY KEY,
     fname VARCHAR(50) NOT NULL,
@@ -5,13 +10,9 @@ CREATE TABLE employee (
     jobType VARCHAR(50) NOT NULL,
     paycheck INT NOT NULL,
     hoursWorked INT NOT NULL,
-    FOREIGN KEY (type) REFERENCES salaries(type)
+    FOREIGN KEY (jobType) REFERENCES salaries(jobType)
 );
 
-CREATE TABLE salaries (
-    jobType VARCHAR(50) PRIMARY KEY,
-    hourlySalary INT NOT NULL
-);
 
 CREATE TABLE reservation (
     resID INT PRIMARY KEY,
@@ -35,6 +36,11 @@ CREATE TABLE customer (
     FOREIGN KEY (resID) REFERENCES reservation(resID)
 );
 
+CREATE TABLE allergies (
+    allergyID INT PRIMARY KEY,
+    allergyName VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE hasAllergy (
     customerID INT,
     allergyID INT,
@@ -43,10 +49,6 @@ CREATE TABLE hasAllergy (
     FOREIGN KEY (allergyID) REFERENCES allergies(allergyID)
 );
 
-CREATE TABLE allergies (
-    allergyID INT PRIMARY KEY,
-    allergyName VARCHAR(50) NOT NULL
-);
 
 CREATE TABLE ingredients (
     ingredientID INT PRIMARY KEY,
@@ -56,21 +58,23 @@ CREATE TABLE ingredients (
     FOREIGN KEY (allergyID) REFERENCES allergies(allergyID)
 );
 
-CREATE TABLE usedIn (
-    ingredientID INT,
-    dishID INT,
-    PRIMARY KEY (ingredientID, dishID),
-    FOREIGN KEY (ingredientID) REFERENCES ingredients(ingredientID),
-    FOREIGN KEY (dishID) REFERENCES menuItem(itemID)
-);
+
 
 CREATE TABLE menuItem (
     itemID INT PRIMARY KEY,
     menuItemName VARCHAR(50) NOT NULL,
     price INT NOT NULL,
     dishType VARCHAR(50) NOT NULL,
-    isAlcoholic BOOLEAN NOT NULL,
+    isAlcoholic BIT NOT NULL,
     cost INT NOT NULL
+);
+
+CREATE TABLE usedIn (
+    ingredientID INT,
+    dishID INT,
+    PRIMARY KEY (ingredientID, dishID),
+    FOREIGN KEY (ingredientID) REFERENCES ingredients(ingredientID),
+    FOREIGN KEY (dishID) REFERENCES menuItem(itemID)
 );
 
 CREATE TABLE ordered (
