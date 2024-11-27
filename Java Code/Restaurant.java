@@ -3,49 +3,39 @@ import java.util.Scanner;
 
 public class Restaurant {
     public static void main(String[] args) {
-        String connectionUrl =
-            "jdbc:sqlserver://cxp-sql-02\\jxs1902;" +
-            "database=restaurant;" +
-            "user=dbuser;" +
-            "password=csds341143sdsc;" +
-            "encrypt=true;" +
-            "trustServerCertificate=true;" +
-            "loginTimeout=900;";
+        String connectionUrl = "jdbc:sqlserver://cxp-sql-02\\jxs1902;" +
+                "database=Restaurant;" +
+                "user=RestaurantDev;" +
+                "password=CSDS341Pr0j3ctgr*up24;" +
+                "encrypt=true;" +
+                "trustServerCertificate=true;" +
+                "loginTimeout=900;";
 
         Scanner scanner = new Scanner(System.in);
-        try (Connection connection = DriverManager.getConnection(connectionUrl)) 
-        {
+        try (Connection connection = DriverManager.getConnection(connectionUrl)) {
             System.out.println("Connected to the database.");
             System.out.print("Enter the stored procedure name: ");
             String procedureName = scanner.nextLine();
 
             if (procedureName.equalsIgnoreCase("addCustomer")) {
                 addCustomer(connection, scanner);
-            } 
-            else if (procedureName.equalsIgnoreCase("addEmployee")) {
+            } else if (procedureName.equalsIgnoreCase("addEmployee")) {
                 addEmployee(connection, scanner);
-            } 
-            else if (procedureName.equalsIgnoreCase("addReservation")) {
+            } else if (procedureName.equalsIgnoreCase("addReservation")) {
                 addReservation(connection, scanner);
-            } 
-            else if (procedureName.equalsIgnoreCase("addTime")) {
+            } else if (procedureName.equalsIgnoreCase("addTime")) {
                 addTime(connection, scanner);
-            } 
-            else if (procedureName.equalsIgnoreCase("addTip")) {
+            } else if (procedureName.equalsIgnoreCase("addTip")) {
                 addTip(connection, scanner);
-            } 
-            else if (procedureName.equalsIgnoreCase("calculatePaycheck")) {
+            } else if (procedureName.equalsIgnoreCase("calculatePaycheck")) {
                 calculatePaycheck(connection, scanner);
-            }
-            else {
+            } else {
                 System.out.println("Unknown stored procedure.");
             }
-            
-        } 
-        catch (SQLException e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             scanner.close();
         }
     }
@@ -57,7 +47,7 @@ public class Restaurant {
         String lname = scanner.nextLine();
         System.out.print("Enter birthdate (YYYY-MM-DD): ");
         String birthdateStr = scanner.nextLine();
-        Date birthdate = Date.valueOf(birthdateStr); 
+        Date birthdate = Date.valueOf(birthdateStr);
         System.out.print("Enter reservation ID: ");
         int resID = scanner.nextInt();
         scanner.nextLine();
@@ -71,8 +61,7 @@ public class Restaurant {
 
             stmt.execute();
             System.out.println("Customer added successfully.");
-        } 
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
@@ -100,8 +89,7 @@ public class Restaurant {
 
             stmt.execute();
             System.out.println("Employee added successfully.");
-        } 
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
@@ -113,7 +101,7 @@ public class Restaurant {
         String reserverLname = scanner.nextLine();
         System.out.print("Enter number of people: ");
         int numPeople = scanner.nextInt();
-        scanner.nextLine();  
+        scanner.nextLine();
         System.out.print("Enter reservation date (YYYY-MM-DD): ");
         String resDate = scanner.nextLine();
         System.out.print("Enter reservation time (HH:mm:ss): ");
@@ -129,15 +117,14 @@ public class Restaurant {
             stmt.setString(1, reserverFname);
             stmt.setString(2, reserverLname);
             stmt.setInt(3, numPeople);
-            stmt.setDate(4, Date.valueOf(resDate)); 
-            stmt.setTime(5, Time.valueOf(resTime)); 
+            stmt.setDate(4, Date.valueOf(resDate));
+            stmt.setTime(5, Time.valueOf(resTime));
             stmt.setInt(6, mealPrice);
             stmt.setInt(7, tip);
 
             stmt.execute();
             System.out.println("Reservation added successfully.");
-        } 
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
@@ -156,8 +143,7 @@ public class Restaurant {
 
             stmt.execute();
             System.out.println("Time added successfully.");
-        } 
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
@@ -176,8 +162,7 @@ public class Restaurant {
 
             stmt.execute();
             System.out.println("Tip added successfully.");
-        } 
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
@@ -186,7 +171,7 @@ public class Restaurant {
         System.out.print("Enter employee ID: ");
         int empID = scanner.nextInt();
         scanner.nextLine();
-    
+
         String sql = "{CALL sp_CalculatePaycheck(?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setInt(1, empID);
