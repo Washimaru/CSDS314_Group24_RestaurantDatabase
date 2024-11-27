@@ -17,9 +17,14 @@ BEGIN
     BEGIN TRY
         SELECT TOP 1 @empID = empID
         FROM employee
+        WHERE type = 'server'
         ORDER BY NEWID();
 
-        -- Trigger 1: Check reservation capacity for the given date and time
+        IF @empID IS NULL
+        BEGIN
+            THROW 51002, 'No available server to assign to the reservation.', 1;
+        END
+
         IF EXISTS (
             SELECT 1
             FROM reservation
@@ -31,7 +36,6 @@ BEGIN
             THROW 51000, 'Reservation exceeds the restaurant capacity.', 1;
         END
 
-        -- Trigger 2: Check service hours for the reservation time
         IF NOT (@resTime >= @openingTime AND @resTime <= @closingTime)
         BEGIN
             THROW 51001, 'Reservation time is outside of service hours.', 1;
@@ -42,14 +46,13 @@ BEGIN
 
         SET @resID = SCOPE_IDENTITY();
 
-        -- Print confirmation message with reservation details
         PRINT 'Reservation successfully added. Reservation ID: ' + CAST(@resID AS NVARCHAR(10));
         PRINT 'Reservation Details:';
         PRINT 'Reserver Name: ' + @reserverFname + ' ' + @reserverLname;
         PRINT 'Number of People: ' + CAST(@numPeople AS NVARCHAR(10));
         PRINT 'Date: ' + CONVERT(VARCHAR(10), @resDate);
         PRINT 'Time: ' + CONVERT(VARCHAR(8), @resTime);
-        
+
         DECLARE @employeeName NVARCHAR(100);
         SELECT @employeeName = fname + ' ' + lname
         FROM employee
