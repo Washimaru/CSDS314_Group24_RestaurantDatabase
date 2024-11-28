@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_AddCustomer
+CREATE OR ALTER PROCEDURE sp_AddCustomer
     @fname NVARCHAR(50),
     @lname NVARCHAR(50),
     @birthdate DATE,

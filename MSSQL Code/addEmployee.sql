@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_AddEmployee
+CREATE OR ALTER PROCEDURE sp_AddEmployee
     @fname NVARCHAR(50),
     @lname NVARCHAR(50),
     @jobType NVARCHAR(20),
@@ -9,37 +9,24 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
 
-        IF NOT EXISTS (
-            SELECT 1
-            FROM salaries
-            WHERE jobType = @jobType
-        )
+        -- Validate or insert job type in salaries
+        IF NOT EXISTS (SELECT 1 FROM salaries WHERE jobType = @jobType)
         BEGIN
-            THROW 51005, 'Invalid employee type. Please provide a valid type with a salary defined in the salaries table.', 1;
+            INSERT INTO salaries (jobType, hourlySalary)
+            VALUES (@jobType, 0); -- Default hourly salary is 0
+            PRINT 'New job type added to salaries table.';
         END
 
-        DECLARE @hourlySalary INT;
-        SELECT @hourlySalary = hourlySalary
-        FROM salaries
-        WHERE jobType = @jobType;
-
+        -- Insert new employee
         INSERT INTO employee (fname, lname, jobType, hoursWorked, paycheck)
         VALUES (@fname, @lname, @jobType, @hoursWorked, @paycheck);
 
-        DECLARE @newEmpID INT;
-        SET @newEmpID = SCOPE_IDENTITY(); 
+        COMMIT Transaction;
 
-        PRINT 'Employee successfully added. Employee ID: ' + CAST(@newEmpID AS NVARCHAR(10));
-        PRINT 'Employee Details:';
-        PRINT 'Name: ' + @fname + ' ' + @lname;
-        PRINT 'Job Type: ' + @jobType;
-        PRINT 'Hourly Salary: ' + CAST(@hourlySalary AS NVARCHAR(10));
-        PRINT 'Hours Worked: ' + CAST(@hoursWorked AS NVARCHAR(10));
-
-        COMMIT TRANSACTION;
+        PRINT 'Employee added successfully.';
     END TRY
     BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        PRINT 'Error: ' + ERROR_MESSAGE();
+        ROLLBACK TRANSACTIon;
+        PRINT 'Error adding employee: ' + ERROR_MESSAGE();
     END CATCH;
 END;

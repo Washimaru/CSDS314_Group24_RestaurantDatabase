@@ -1,4 +1,4 @@
-CREATE PROCEDURE AddJobType
+CREATE OR ALTER PROCEDURE AddJobType
     @jobType VARCHAR(50),
     @hourlySalary INT
 AS
