@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_CalculatePaycheck
+CREATE PROCEDURE CalculatePaycheck
     @empID INT,
     @basePay INT OUTPUT,
     @tips INT OUTPUT,

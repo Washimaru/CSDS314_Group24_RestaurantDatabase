@@ -60,7 +60,7 @@ public class Restaurant {
         int resID = scanner.nextInt();
         scanner.nextLine();
 
-        String sql = "{CALL sp_AddCustomer(?, ?, ?, ?)}";
+        String sql = "{CALL AddCustomer(?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setString(1, fname);
             stmt.setString(2, lname);
@@ -87,7 +87,7 @@ public class Restaurant {
         int paycheck = scanner.nextInt();
         scanner.nextLine();
 
-        String sql = "{CALL sp_AddEmployee(?, ?, ?, ?, ?)}";
+        String sql = "{CALL AddEmployee(?, ?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setString(1, fname);
             stmt.setString(2, lname);
@@ -110,10 +110,10 @@ public class Restaurant {
         System.out.print("Enter number of people: ");
         int numPeople = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-    
+
         String resDate;
         String resTime;
-    
+
         // Validate reservation date
         while (true) {
             System.out.print("Enter reservation date (YYYY-MM-DD): ");
@@ -124,7 +124,7 @@ public class Restaurant {
                 System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
             }
         }
-    
+
         // Validate reservation time
         while (true) {
             System.out.print("Enter reservation time (HH:mm:ss): ");
@@ -135,8 +135,8 @@ public class Restaurant {
                 System.out.println("Invalid time format. Please enter the time in HH:mm:ss format.");
             }
         }
-    
-        String sql = "{CALL sp_AddReservation(?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        String sql = "{CALL AddReservation(?, ?, ?, ?, ?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             // Set input parameters
             stmt.setString(1, reserverFname);
@@ -146,13 +146,13 @@ public class Restaurant {
             stmt.setTime(5, Time.valueOf(resTime));
             stmt.setInt(6, 0); // Default mealPrice
             stmt.setInt(7, 0); // Default tip
-    
+
             // Register output parameter
             stmt.registerOutParameter(8, Types.NVARCHAR);
-    
+
             // Execute the stored procedure
             stmt.execute();
-    
+
             // Retrieve and print the reservation details
             String reservationDetails = stmt.getString(8);
             System.out.println("Reservation added successfully:");
@@ -161,7 +161,7 @@ public class Restaurant {
             System.out.println("Error executing stored procedure: " + e.getMessage());
         }
     }
-    
+
     // Method to validate date format
     private static boolean isValidDate(String date) {
         try {
@@ -172,7 +172,7 @@ public class Restaurant {
             return false;
         }
     }
-    
+
     // Method to validate time format
     private static boolean isValidTime(String time) {
         try {
@@ -191,7 +191,7 @@ public class Restaurant {
         int hoursToAdd = scanner.nextInt();
         scanner.nextLine();
 
-        String sql = "{CALL sp_AddTime(?, ?)}";
+        String sql = "{CALL AddTime(?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setInt(1, empID);
             stmt.setInt(2, hoursToAdd);
@@ -210,7 +210,7 @@ public class Restaurant {
         int tip = scanner.nextInt();
         scanner.nextLine();
 
-        String sql = "{CALL sp_AddTip(?, ?)}";
+        String sql = "{CALL AddTip(?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             stmt.setInt(1, resID);
             stmt.setInt(2, tip);
@@ -226,34 +226,33 @@ public class Restaurant {
         System.out.print("Enter employee ID: ");
         int empID = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-    
+
         String sql = "{CALL sp_CalculatePaycheck(?, ?, ?, ?)}";
         try (CallableStatement stmt = connection.prepareCall(sql)) {
             // Set IN parameter
             stmt.setInt(1, empID);
-    
+
             // Register OUT parameters
             stmt.registerOutParameter(2, java.sql.Types.INTEGER); // Base Pay
             stmt.registerOutParameter(3, java.sql.Types.INTEGER); // Tips
             stmt.registerOutParameter(4, java.sql.Types.INTEGER); // Total Pay
-    
+
             // Execute stored procedure
             stmt.execute();
-    
-            double basePay = (double)stmt.getInt(2);
-            double tips = (double)stmt.getInt(3);
-            double totalPay = (double)stmt.getInt(4);
-    
+
+            double basePay = (double) stmt.getInt(2);
+            double tips = (double) stmt.getInt(3);
+            double totalPay = (double) stmt.getInt(4);
+
             System.out.println("Paycheck calculated successfully:");
-            System.out.println("Base Pay: " + basePay/100 + " dollars/hour");
-            System.out.println("Tips: " + tips/100 + " dollars");
-            System.out.println("Total Paycheck: " + totalPay/100 + " dollars");
+            System.out.println("Base Pay: " + basePay / 100 + " dollars/hour");
+            System.out.println("Tips: " + tips / 100 + " dollars");
+            System.out.println("Total Paycheck: " + totalPay / 100 + " dollars");
         } catch (SQLException e) {
             System.out.println("Error calculating paycheck: " + e.getMessage());
         }
     }
-    
-    
+
     private static void displayMenuItems(Connection connection, Scanner scanner) {
         System.out.print("Enter customer ID: ");
         int customerID = scanner.nextInt();

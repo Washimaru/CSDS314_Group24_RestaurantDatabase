@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_AddEmployee
+CREATE OR ALTER PROCEDURE AddEmployee
     @fname NVARCHAR(50),
     @lname NVARCHAR(50),
     @jobType NVARCHAR(20),

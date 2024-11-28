@@ -1,4 +1,4 @@
-CREATE or ALTER PROCEDURE sp_AddReservation
+CREATE or ALTER PROCEDURE AddReservation
     @reserverFname NVARCHAR(50),
     @reserverLname NVARCHAR(50),
     @numPeople INT,

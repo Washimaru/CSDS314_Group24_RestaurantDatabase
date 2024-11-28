@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_AddTip
+CREATE PROCEDURE AddTip
     @resID INT,
     @tip INT
 AS

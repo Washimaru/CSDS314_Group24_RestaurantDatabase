@@ -1,4 +1,4 @@
-CREATE OR ALTER TRIGGER trg_UpdatePaycheckOnPromotion
+CREATE OR ALTER TRIGGER UpdatePaycheckOnPromotion
 ON employee
 AFTER UPDATE
 AS

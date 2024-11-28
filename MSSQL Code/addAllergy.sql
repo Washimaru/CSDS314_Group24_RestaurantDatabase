@@ -1,4 +1,4 @@
-CREATE PROCEDURE AddAllergy
+CREATE OR ALTER PROCEDURE AddAllergy
     @allergyName VARCHAR(50)
 AS
 BEGIN

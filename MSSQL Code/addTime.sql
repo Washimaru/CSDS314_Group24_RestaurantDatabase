@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_AddTime
+CREATE PROCEDURE AddTime
     @empID INT,
     @hoursToAdd INT
 AS

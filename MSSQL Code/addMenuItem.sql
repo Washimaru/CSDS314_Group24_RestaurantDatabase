@@ -1,4 +1,4 @@
-CREATE PROCEDURE AddMenuItem
+CREATE OR ALTER PROCEDURE AddMenuItem
     @menuItemName VARCHAR(50),
     @price INT,
     @dishType VARCHAR(50),
