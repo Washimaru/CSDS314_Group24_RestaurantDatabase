@@ -165,7 +165,7 @@ END;
 
 Go
 
-CREATE PROCEDURE AddCustomer
+CREATE OR ALTER PROCEDURE AddCustomer
     @fname NVARCHAR(50),
     @lname NVARCHAR(50),
     @birthdate DATE,
@@ -241,7 +241,7 @@ END;
 
 GO
 
-CREATE PROCEDURE CalculatePaycheck
+CREATE OR ALTER PROCEDURE CalculatePaycheck
     @empID INT,
     @basePay INT OUTPUT,
     @tips INT OUTPUT,
@@ -294,7 +294,7 @@ END;
 
 GO
 
-CREATE PROCEDURE AddTime
+CREATE OR ALTER PROCEDURE AddTime
     @empID INT,
     @hoursToAdd INT
 AS
@@ -423,7 +423,7 @@ END;
 
 GO
 
-CREATE PROCEDURE AddTip
+CREATE OR ALTER PROCEDURE AddTip
     @resID INT,
     @tip INT
 AS
