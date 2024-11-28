@@ -1,8 +1,12 @@
 CREATE PROCEDURE sp_CalculatePaycheck
-    @empID INT
+    @empID INT,
+    @basePay INT OUTPUT,
+    @tips INT OUTPUT,
+    @totalPay INT OUTPUT
 AS
 BEGIN
-    DECLARE @paycheck INT = 0;
+    BEGIN TRANSACTION;
+
     DECLARE @hoursWorked INT = 0;
     DECLARE @hourlySalary INT = 0;
     DECLARE @totalTips INT = 0;
@@ -13,7 +17,12 @@ BEGIN
         JOIN salaries s ON e.jobType = s.jobType
         WHERE e.empID = @empID;
 
-        SET @paycheck = @hoursWorked * @hourlySalary;
+        IF @hoursWorked IS NULL OR @hourlySalary IS NULL
+        BEGIN
+            THROW 51000, 'Employee data is incomplete. Cannot calculate paycheck.', 1;
+        END
+
+        SET @basePay = @hoursWorked * @hourlySalary;
 
         IF EXISTS (
             SELECT 1
@@ -24,21 +33,18 @@ BEGIN
             SELECT @totalTips = COALESCE(SUM(r.tip), 0)
             FROM reservation r
             WHERE r.empID = @empID;
-            
-            SET @paycheck = @paycheck + @totalTips;
         END
 
+        SET @totalPay = @basePay + @totalTips;
+
         UPDATE employee
-        SET paycheck = @paycheck
+        SET paycheck = @totalPay
         WHERE empID = @empID;
 
-        PRINT 'Paycheck calculated successfully.';
-        PRINT 'Paycheck Details:';
-        PRINT 'Base Pay: ' + CAST(@hoursWorked * @hourlySalary AS NVARCHAR);
-        PRINT 'Tips: ' + CAST(@totalTips AS NVARCHAR);
-        PRINT 'Total Paycheck: ' + CAST(@paycheck AS NVARCHAR);
+        COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
-        PRINT ERROR_MESSAGE();
+        ROLLBACK TRANSACTION;
+        THROW;
     END CATCH;
 END;

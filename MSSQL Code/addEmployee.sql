@@ -3,10 +3,12 @@ CREATE PROCEDURE sp_AddEmployee
     @lname NVARCHAR(50),
     @jobType NVARCHAR(20),
     @hoursWorked INT = 0,
-	@paycheck INT = 0
+    @paycheck INT = 0
 AS
 BEGIN
     BEGIN TRY
+        BEGIN TRANSACTION;
+
         IF NOT EXISTS (
             SELECT 1
             FROM salaries
@@ -34,8 +36,10 @@ BEGIN
         PRINT 'Hourly Salary: ' + CAST(@hourlySalary AS NVARCHAR(10));
         PRINT 'Hours Worked: ' + CAST(@hoursWorked AS NVARCHAR(10));
 
+        COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
-        PRINT ERROR_MESSAGE();
+        ROLLBACK TRANSACTION;
+        PRINT 'Error: ' + ERROR_MESSAGE();
     END CATCH;
 END;
