@@ -8,38 +8,19 @@ AS
 BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
-
-        IF NOT EXISTS (
-            SELECT 1
-            FROM salaries
-            WHERE jobType = @jobType
-        )
+        IF NOT EXISTS (SELECT 1 FROM salaries WHERE jobType = @jobType)
         BEGIN
-            THROW 51005, 'Invalid employee type. Please provide a valid type with a salary defined in the salaries table.', 1;
+            INSERT INTO salaries (jobType, hourlySalary)
+            VALUES (@jobType, 0); -- Default hourly salary is 0
+            PRINT 'New job type added to salaries table.';
         END
-
-        DECLARE @hourlySalary INT;
-        SELECT @hourlySalary = hourlySalary
-        FROM salaries
-        WHERE jobType = @jobType;
-
         INSERT INTO employee (fname, lname, jobType, hoursWorked, paycheck)
         VALUES (@fname, @lname, @jobType, @hoursWorked, @paycheck);
-
-        DECLARE @newEmpID INT;
-        SET @newEmpID = SCOPE_IDENTITY(); 
-
-        PRINT 'Employee successfully added. Employee ID: ' + CAST(@newEmpID AS NVARCHAR(10));
-        PRINT 'Employee Details:';
-        PRINT 'Name: ' + @fname + ' ' + @lname;
-        PRINT 'Job Type: ' + @jobType;
-        PRINT 'Hourly Salary: ' + CAST(@hourlySalary AS NVARCHAR(10));
-        PRINT 'Hours Worked: ' + CAST(@hoursWorked AS NVARCHAR(10));
-
-        COMMIT TRANSACTION;
+        COMMIT Transaction;
+        PRINT 'Employee added successfully.';
     END TRY
     BEGIN CATCH
         ROLLBACK TRANSACTION;
-        PRINT 'Error: ' + ERROR_MESSAGE();
+        PRINT 'Error adding employee: ' + ERROR_MESSAGE();
     END CATCH;
 END;

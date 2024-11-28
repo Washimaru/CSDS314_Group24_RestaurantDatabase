@@ -1,19 +1,28 @@
-CREATE PROCEDURE AddJobType
-    @jobType VARCHAR(50),
+CREATE OR ALTER PROCEDURE AddJobTitle
+    @jobType NVARCHAR(20),
     @hourlySalary INT
 AS
 BEGIN
-    BEGIN TRANSACTION;
-
     BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF EXISTS (SELECT 1 FROM salaries WHERE jobType = @jobType)
+        BEGIN
+            THROW 50006, 'Job type already exists in the salaries table.', 1;
+        END
+
         INSERT INTO salaries (jobType, hourlySalary)
         VALUES (@jobType, @hourlySalary);
 
-        COMMIT TRANSACTION;
+        UPDATE employee
+        SET jobType = @jobType
+        WHERE jobType IS NULL OR jobType = 'Default';
+
+        COMMIT Transaction;
+
         PRINT 'Job title added successfully.';
     END TRY
     BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        PRINT 'An error occurred. Job title not added.';
-    END CATCH
-END;
+        ROLLBACK Transaction;
+        PRINT 'Error adding job title: ' + ERROR_MESSAGE();
+    END CATCH;

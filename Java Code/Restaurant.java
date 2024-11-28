@@ -25,6 +25,14 @@ public class Restaurant {
                 addCustomer(connection, scanner);
             } else if (procedureName.equalsIgnoreCase("addEmployee")) {
                 addEmployee(connection, scanner);
+            } else if (procedureName.equalsIgnoreCase("addJobTitle")) {
+                addJobTitle(connection, scanner);
+            } else if (procedureName.equalsIgnoreCase("PromoteEmployee")) {
+                promoteEmployee(connection, scanner);
+            } else if (procedureName.equalsIgnoreCase("addAllergy")) {
+                addAllergy(connection, scanner);
+            } else if (procedureName.equalsIgnoreCase("addMenuItem")) {
+                addMenuItem(connection, scanner);
             } else if (procedureName.equalsIgnoreCase("addReservation")) {
                 addReservation(connection, scanner);
             } else if (procedureName.equalsIgnoreCase("addTime")) {
@@ -99,6 +107,89 @@ public class Restaurant {
             System.out.println("Employee added successfully.");
         } catch (SQLException e) {
             System.out.println("Error executing stored procedure: " + e.getMessage());
+        }
+    }
+
+    private static void addJobTitle(Connection connection, Scanner scanner) {
+        System.out.print("Enter job type: ");
+        String jobType = scanner.nextLine();
+        System.out.print("Enter hourly salary: ");
+        int hourlySalary = scanner.nextInt();
+        scanner.nextLine();
+
+        String sql = "{CALL AddJobTitle(?, ?)}";
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setString(1, jobType);
+            stmt.setInt(2, hourlySalary);
+
+            stmt.execute();
+            System.out.println("Job title added successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error executing stored procedure: " + e.getMessage());
+        }
+    }
+
+    private static void promoteEmployee(Connection connection, Scanner scanner) {
+        System.out.print("Enter employee ID: ");
+        int empID = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter new job type: ");
+        String newJobType = scanner.nextLine();
+
+        String sql = "{CALL PromoteEmployee(?, ?)}";
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setInt(1, empID);
+            stmt.setString(2, newJobType);
+
+            stmt.execute();
+            System.out.println("Employee promoted successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error promoting employee: " + e.getMessage());
+        }
+    }
+
+    private static void addAllergy(Connection connection, Scanner scanner) {
+        System.out.print("Enter allergy name: ");
+        String allergyName = scanner.nextLine();
+
+        String sql = "{CALL AddAllergy(?)}";
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setString(1, allergyName);
+
+            stmt.execute();
+            System.out.println("Allergy added successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error adding allergy: " + e.getMessage());
+        }
+    }
+
+    private static void addMenuItem(Connection connection, Scanner scanner) {
+        System.out.print("Enter menu item name: ");
+        String menuItemName = scanner.nextLine();
+        System.out.print("Enter price (in cents): ");
+        int price = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter dish type: ");
+        String dishType = scanner.nextLine();
+        System.out.print("Is it alcoholic? (yes/no): ");
+        String isAlcoholicInput = scanner.nextLine();
+        boolean isAlcoholic = isAlcoholicInput.equalsIgnoreCase("yes");
+        System.out.print("Enter cost (in cents): ");
+        int cost = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        String sql = "{CALL AddMenuItem(?, ?, ?, ?, ?)}";
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setString(1, menuItemName); // Set menuItemName
+            stmt.setInt(2, price); // Set price
+            stmt.setString(3, dishType); // Set dishType
+            stmt.setBoolean(4, isAlcoholic); // Set isAlcoholic
+            stmt.setInt(5, cost); // Set cost
+
+            stmt.execute();
+            System.out.println("Menu item added successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error adding menu item: " + e.getMessage());
         }
     }
 
