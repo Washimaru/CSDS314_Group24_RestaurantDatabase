@@ -82,6 +82,8 @@ CREATE TABLE ordered (
     FOREIGN KEY (itemID) REFERENCES menuItem(itemID)
 );
 
+go
+
 CREATE TRIGGER UpdatePaycheckOnPromotion
 ON employee
 AFTER UPDATE

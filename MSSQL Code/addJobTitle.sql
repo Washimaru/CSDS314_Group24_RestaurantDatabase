@@ -26,3 +26,4 @@ BEGIN
         ROLLBACK Transaction;
         PRINT 'Error adding job title: ' + ERROR_MESSAGE();
     END CATCH;
+END;
